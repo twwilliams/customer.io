@@ -23,9 +23,24 @@ Code for customer.io question in application. This code answers three questions:
 4. Run the program with `python3 repo_info.py`
 
 ## Future enhancements
-- **Add tests.** I wasn't sure how far to go with this exercise so I
-  timeboxed it. Proper unit testing would have required mocking the
-  network calls to the GitHub API.
+
+Since this is a script and not a full-blown application or a reusable
+library, I have kept the error-handling to a minimum and haven't added
+tests so that the flow is clear.
+
+As a script, it would be nice to make the **organization name a
+command-line option** rather than requiring editing the script.
+
+To go beyond a script to a library or richer application, I would need
+to start with:
+
+- **Add tests.** Proper unit testing would required mocking the
+  network calls to the GitHub API and then we would need integration
+  and end-to-end tests as well.
+
+- **Add error handling.** While there is some precedent in Python to
+  keep error handling to a minimum, it shouldn't be as minimal as I
+  have left it here.
 
 - **Cache the results from the GitHub API.** Since this is not using
   any authentication, it is rate-limited to 60 requests per hour. The
