@@ -14,7 +14,16 @@ Repository = namedtuple('Repository',
                         'name url updated open_issues watchers')
 
 
-def get_next_page_link(link_header):
+def api_repo_url(org_name):
+    """
+    With the supplied organization name, constructs a GitHub API URL
+    :param org_name: GitHub organization name
+    :return: URL to GitHub API to query org's repos
+    """
+    return 'https://api.github.com/orgs/{}/repos'.format(org_name)
+
+
+def next_page_link(link_header):
     """
     The link_header will be of the form:
     <(url)>; rel="(relation)", <(url2)>; rel="<(relation2)>"
@@ -57,7 +66,7 @@ def all_repos_data(url):
         link_header = repos_response.headers.get('Link', None)
 
         if link_header:
-            url = get_next_page_link(repos_response.headers['Link'])
+            url = next_page_link(repos_response.headers['Link'])
             if not url:
                 more_pages = False
         else:
@@ -82,12 +91,12 @@ def all_repos_filtered(start_url):
 
 def main():
     """
-    Entry point to the script. Prints desired output to the console.
+    Entry point to the script. Prints answers to the three questions to the
+    console.
     """
 
-    repos_first_page_url = 'https://api.github.com/orgs/customerio/repos'
-
-    repos = all_repos_filtered(repos_first_page_url)
+    # Change this parameter to query other organizations
+    repos = all_repos_filtered(api_repo_url('customerio'))
 
     issues_count = 0
     watchers_max = {'name': '', 'watchers': 0}
@@ -105,16 +114,17 @@ def main():
 
         # Would technically be more efficient to print the repo names
         # here. To provide the output in the correct order, need to do it
-        # separately. It's a small list, though, and the performance difference
-        # is negligible, especially compared to the time to retrieve the
-        # repos from the GitHub API.
+        # separately. It's a small list, and the performance difference
+        # is negligible compared to the time to retrieve the repos from the
+        # GitHub API, and this is a script, not a library.
 
-    # Note that the GitHub API considers pull requests to be issues even
-    # though the UI shows them separately
+    # The GitHub API considers pull requests to be issues even though the UI
+    # counts them separately
     print("#1: Open issues across all public repositories:", issues_count)
     print("----------------")
 
-    print("#2: List of all repositories sorted in descending order")
+    print("#2: List of all repositories sorted by date updated in descending",
+          "order:")
     for repo in repos:
         print(repo.name)
     print("----------------")
